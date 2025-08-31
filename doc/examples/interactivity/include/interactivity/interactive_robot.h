@@ -39,11 +39,12 @@
 #ifndef MOVEIT_TUTORIALS_INTERACTIVITY_SRC_INTERACTIVE_ROBOT_H_
 #define MOVEIT_TUTORIALS_INTERACTIVITY_SRC_INTERACTIVE_ROBOT_H_
 
+#include <chrono>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
-#include <moveit/robot_model_loader/robot_model_loader.h>
-#include <moveit/robot_model/robot_model.h>
-#include <moveit/robot_state/robot_state.h>
+#include <moveit/robot_model_loader/robot_model_loader.hpp>
+#include <moveit/robot_model/robot_model.hpp>
+#include <moveit/robot_state/robot_state.hpp>
 #include <moveit_msgs/msg/display_robot_state.hpp>
 
 #include <rclcpp/timer.hpp>
@@ -73,12 +74,6 @@ public:
 
   /** set pose of the world object */
   void setWorldObjectPose(const Eigen::Isometry3d& pose);
-
-  /** set a callback to call when updates occur */
-  void setUserCallback(std::function<void(InteractiveRobot& robot)> callback)
-  {
-    user_callback_ = std::move(callback);
-  }
 
   /** access RobotModel */
   moveit::core::RobotModelPtr& robotModel()
@@ -152,11 +147,8 @@ private:
   static const double WORLD_BOX_SIZE_;
   static const Eigen::Isometry3d DEFAULT_WORLD_OBJECT_POSE_;
 
-  /* user callback function */
-  std::function<void(InteractiveRobot& robot)> user_callback_;
-
   /* timer info for rate limiting */
-  rclcpp::WallTimer<std::function<void()>>::SharedPtr publish_timer_;
+  rclcpp::TimerBase::SharedPtr publish_timer_;
   rclcpp::Time init_time_;
   rclcpp::Time last_callback_time_;
   rclcpp::Duration average_callback_duration_;
